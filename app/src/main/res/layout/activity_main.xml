@@ -8,7 +8,12 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include layout="@layout/content_main" />
+    <!--<include layout="@layout/content_main" />-->
+
+    <include
+        layout="@layout/app_bar_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
@@ -19,52 +24,52 @@
 
         >
 
-        <!--<include layout="@layout/nav_body_main" />-->
+        <include layout="@layout/nav_body_main" />
 
-        <LinearLayout
+        <!--<LinearLayout-->
 
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:clickable="true"
-            android:orientation="vertical"
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:clickable="true"-->
+            <!--android:orientation="vertical"-->
 
-            >
-            <EditText
-                android:id="@+id/marker_title"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center"
-                android:hint="Title" />
-            <EditText
-                android:id="@+id/marker_desc"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:gravity="center"
-                android:hint="Message" />
+            <!--&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/marker_title"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:gravity="center"-->
+                <!--android:hint="Title" />-->
+            <!--<EditText-->
+                <!--android:id="@+id/marker_desc"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:gravity="center"-->
+                <!--android:hint="Message" />-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center"
-                android:gravity="center">
-                <Button
-                    android:id="@+id/marker_save_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="Submit"/>
-                <Button
-                    android:id="@+id/marker_delete_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="Delete"/>
-            </LinearLayout>
-        </LinearLayout>
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:gravity="center">-->
+                <!--<Button-->
+                    <!--android:id="@+id/marker_save_button"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="center"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:text="Submit"/>-->
+                <!--<Button-->
+                    <!--android:id="@+id/marker_delete_button"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="center"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:text="Delete"/>-->
+            <!--</LinearLayout>-->
+        <!--</LinearLayout>-->
 
 
     </android.support.design.widget.NavigationView>

@@ -86,9 +86,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             // We will start the profile activity here
                             // Making a Toast for now, will change later
                             Toast.makeText(LoginActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                            finish();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class)
-                                    .putExtra("userId", firebaseAuth.getCurrentUser().getUid()));
+
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class)
+                                    .putExtra("USERUID", firebaseAuth.getCurrentUser().getUid()));
                         } else {
                             Toast.makeText(LoginActivity.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
                         }
@@ -103,12 +103,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         if (view == signUpTextView) {
-            finish();
+
             startActivity(new Intent(this, SignUp.class));
         }
 
         if (view == guestTextView) {
-            finish();
+
             startActivity(new Intent(this, MainActivity.class));
         }
     }

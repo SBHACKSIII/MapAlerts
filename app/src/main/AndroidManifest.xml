@@ -27,7 +27,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA2aw_b48Cr4OWiVE4kiBQ2kc27sxqRdgc" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
 

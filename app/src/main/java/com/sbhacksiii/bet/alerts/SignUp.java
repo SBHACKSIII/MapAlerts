@@ -95,9 +95,9 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 // We will start the profile activity here
                                 // Making a Toast for now, will change later
                                 Toast.makeText(SignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                                finish();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class)
-                                        .putExtra("userId", firebaseAuth.getCurrentUser().getUid()));
+
+                                startActivity(new Intent(SignUp.this, MainActivity.class)
+                                        .putExtra("USERUID", firebaseAuth.getCurrentUser().getUid()));
                             } else {
                                 Toast.makeText(SignUp.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
                             }
@@ -126,11 +126,11 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         }
         if (view == signInTextView) {
             // Will open login Activity
-            finish();
+
             startActivity(new Intent(this, LoginActivity.class));
         }
         if (view == guestTextView) {
-            finish();
+
             startActivity(new Intent(this, MainActivity.class).putExtra("userId", ""));
         }
     }
