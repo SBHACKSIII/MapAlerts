@@ -12,7 +12,7 @@ public class MarkerInfo implements Serializable
         private LatLng latLng;
         private String desc;
         private String userUID;
-        private Marker marker;
+//        private Marker marker;
 
     public String getTitle() {
         return title;
@@ -50,11 +50,11 @@ public class MarkerInfo implements Serializable
         this.userUID = userUID;
     }
 
-    public Marker getMarker() {
-        return marker;
-    }
-
-    public void setMarker(Marker marker) {
-        this.marker = marker;
-    }
+//    public Marker getMarker() {
+//        return marker;
+//    }
+//
+//    public void setMarker(Marker marker) {
+//        this.marker = marker;
+//    }
 }

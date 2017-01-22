@@ -27,15 +27,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.R.attr.data;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
@@ -90,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ((EditText) findViewById(R.id.marker_title)).setText("");
                 ((EditText) findViewById(R.id.marker_desc)).setText("");
 
-
                 // create marker at that spot
                 final Marker marker =  mGoogleMap.addMarker(new MarkerOptions().position(latLng));
 
@@ -99,9 +91,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 info.setUserUID(auth.getCurrentUser().getUid());
                 info.setDesc("");
                 info.setTitle("");
-                info.setMarker(marker);
-
-
                 // add marker to hashmap
                 markers.put(marker.hashCode(), info);
 
@@ -110,9 +99,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 drawer.openDrawer(GravityCompat.START);
 
 
-//                com.sbhacksiii.bet.alerts.LatLng temp = new com.sbhacksiii.bet.alerts.LatLng();
-//                temp.setLat(latLng.latitude);
-//                temp.setLon(latLng.longitude);
+                com.sbhacksiii.bet.alerts.LatLng temp = new com.sbhacksiii.bet.alerts.LatLng();
+                temp.setLat(latLng.latitude);
+                temp.setLon(latLng.longitude);
+
+                info.setLatLng(temp);
 
                 // add marker data to firebase, this means (for now) user can have blank title and description
                 addMarkerInfoToFireBase(info);
@@ -158,188 +149,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void addMarkerInfoToFireBase(MarkerInfo info)
     //private void addMarkerInfoToFireBase(String id, String userUID, String title, String desc, com.sbhacksiii.bet.alerts.LatLng coordinates)
     {
-        // add data to marker field in database
-//
-//        private String title;
-//        private LatLng latLng;
-//        private String desc;
-//        private String userUID;
-//        private Marker marker;
-
-
-
-        database.child("markers").child(Integer.toString(info.getMarker().hashCode())).setValue(info);
+        // add data to marker field in databas
+        database.child("markers").child(Integer.toString(info.hashCode())).setValue(info);
     }
 
-    private void loadAllMarkers()
-    {
+    private void loadAllMarkers() {
 //         //get all markers
-////
-//        database.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                                    @Override
-//                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-////                                                        // get data snapshot
 //
-//                                                        Log.i("DEBUG", dataSnapshot.toString());
-//
-//
-//
-//                                                        // get markers
-//                                                        //DataSnapshot messageSnapshot =  dataSnapshot.getChildren();
-//                                                        // get hashmap of ids of markers
-//                                                       // HashMap<String, Object> temp = (HashMap<String, Object>) messageSnapshot.getValue();
-//                                                       JSONObject jj = new JSONObject((Map) dataSnapshot.getValue());
-//
-//                                                        getJSONObject arr = null;
-//                                                        try {
-//                                                            arr = new JSONObject(jj.getJSONObject("markers"));
-//                                                        } catch (JSONException e) {
-//                                                            e.printStackTrace();
-//                                                        }
-////
-//
-////                                                        for(int i = 0; i < arr.length(); i++)
-////                                                        {
-////                                                            try {
-////                                                                arr.getJSONObject(i).getString("desc");
-////                                                            } catch (JSONException e) {
-////                                                                e.printStackTrace();
-////                                                            }
-////
-////
-////                                                        }
-//
-//
-//
-//                                                        com.google.firebase.database.DataSnapshot temp = (com.google.firebase.database.DataSnapshot) dataSnapshot.child("markers");
-//
-////                                                       // JSONObject json = (JSONObject) temp.getValue();
-//
-//                                                       // HashMap<String, MarkerInfo> temp2 = (HashMap<String, MarkerInfo>) temp.getValue();
-//
-//
-//
-////                                                        for(String key: temp2.keySet())
-////                                                        {
-////                                                            JSONObject obj = new JSONObject((Map) temp2.get(key));
-////
-////                                                            try {
-////                                                                Log.i("TEST", obj.getJSONObject("desc").toString());
-////                                                                Log.i("TEST", obj.getJSONObject("latLng").toString());
-////                                                                Log.i("TEST", obj.getJSONObject("title").toString());
-////                                                                Log.i("TEST", obj.getJSONObject("desc").toString());
-////                                                                Log.i("TEST", obj.getJSONObject("userUID").toString());
-////                                                                Log.i("TEST", obj.getJSONObject("marker").toString());
-////
-////
-////
-////
-////                                                            } catch (JSONException e) {
-////                                                                e.printStackTrace();
-////                                                            }
-////
-////                                                            MarkerInfo info = temp2.get(key);
-////                                                            //if you uncomment below code, it will throw java.util.ConcurrentModificationException
-////                                                            //studentGrades.remove("Alan");
-////
-////                                                            MarkerOptions marker = new MarkerOptions().position(info.getMarker().getPosition());
-////
-////                                                        }
-//
-//
-//
-//
-//
-//
-//
-////                                                        for (Map.Entry<String, MarkerInfo> entry : temp2.entrySet()) {
-////                                                            String key = entry.getKey();
-////                                                            //HashMap<String, MarkerInfo> =  entry.getValue();//.getValue(MarkerInfo.class);
-////                                                            MarkerInfo hash =  entry.getValue();//.getValue(MarkerInfo.class);
-////
-////
-////                                                            Log.i("DEBUG", "Item : " + entry.getKey() + " Count : " + entry.getValue());
-////
-////                      // LatLng coorindates = new LatLng(info.getMarker().getPosition());
-////
-////                                                           MarkerOptions marker = new MarkerOptions().position(hash.getMarker().getPosition());
-////
-////                                                            Marker mark = mGoogleMap.addMarker(marker);
-////
-////                                                           // info.setMarker(mark);
-////                                                            //markers.put(Integer.parseInt(key), info);
-////                                                        }
-//
-////                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren())
-////                {
-////                    HashMap<String, Object> temp = (HashMap<String, Object>) messageSnapshot.getValue();
-//
-//
-//                                                        // deserialize child
-//                                                        //  Log.i("DATA",  temp.toString());
-//                                                        // need to convert coordinates into the proper LaLng object
-////                    LatLng temp = new LatLng(data.getLatLng().getLat(), data.getLatLng().getLon());
-////                    // set marker
-////                    final Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp));
-////
-////                    Log.i("HASH2", Integer.toString(marker.hashCode()));
-////
-////                    markers.put(marker.hashCode(), data);
-////                    Log.i("DEBUG!!!!!!!!!!",marker.getId());
-////                    // marker.get
-//                                                    }
-//
-//                                                    @Override
-//                                                    public void onCancelled(DatabaseError databaseError) {
-//
-//                                                    }
-//                                                });
-//
-//
-//
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-//        database.child("markers").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                // get data snapshot
-//                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren())
-//                {
-//                    // deserialize child
-//                    MarkerInfo data = messageSnapshot.getValue(MarkerInfo.class);
-//                    // need to convert coordinates into the proper LaLng object
-//                    LatLng temp = new LatLng(data.getLatLng().getLat(), data.getLatLng().getLon());
-//                    // set marker
-//                    final Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp));
-//
-//                    Log.i("HASH2", Integer.toString(marker.hashCode()));
-//                    markers.put(marker.getId(), marker);
-//                    Log.i("DEBUG!!!!!!!!!!",marker.getId());
-//                   // marker.get
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+                for (DataSnapshot shot : dataSnapshot.child("markers").getChildren()) {
+
+                    Log.i("KEY", shot.getKey());
+
+                     MarkerInfo info =            shot.getValue(MarkerInfo.class);                   //     Log.i("KEY", shot.getValue()));
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
+
+
+
 
     private void updateMarkerInfoToFireBase(MarkerInfo info, String title, String desc)
     {
-
         // use hashmap to update multiple fields at once
         Map newdata = new HashMap();
         newdata.put("title", title);
         newdata.put("desc", desc);
 
-        database.child("markers").child(Integer.toString(info.getMarker().hashCode())).updateChildren(newdata);
+        database.child("markers").child(Integer.toString(info.hashCode())).updateChildren(newdata);
     }
 
-    private void removeMarkerInfoToFireBase(String id)
+    private void removeMarkerInfoToFireBase(MarkerInfo info)
     {
         //remove marker from markers field in database
-        database.child("markers").child(id).removeValue();
+        database.child("markers").child(Integer.toString(info.hashCode())).removeValue();
     }
 
     @Override
@@ -374,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     Log.i("TEST", "TEST@@@@");
 
 
-
+//
                     // grab data into hashmap or child fields
                     HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.child("markers").child(Integer.toString(marker.hashCode())).getValue();
                     // gran data
