@@ -4,13 +4,15 @@ package com.sbhacksiii.bet.alerts;
 import com.google.android.gms.maps.model.Marker;
 import com.google.firebase.database.Exclude;
 
-public class MarkerInfo
+import java.io.Serializable;
+
+public class MarkerInfo implements Serializable
 {
-    private String title;
-    private LatLng latLng;
-    private String desc;
-    private String userUID;
-    private Marker marker;
+        private String title;
+        private LatLng latLng;
+        private String desc;
+        private String userUID;
+        private Marker marker;
 
     public String getTitle() {
         return title;
