@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mGoogleMap;
     private DrawerLayout drawer;
-    private HashMap<String, Marker> markers;
+    //private HashMap<String, Marker> markers;
+    private HashMap<Integer, MarkerInfo> markers;
     private DatabaseReference database;
     private String userUID;
     private FirebaseAuth auth;
@@ -46,12 +47,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.google_map);
         mapFragment.getMapAsync(this);
@@ -70,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             userUID = extras.getString("USERUID");
         }
 
-
+        loadAllMarkers();
     }
 
     @Override
@@ -91,32 +88,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 // create marker at that spot
                 final Marker marker =  mGoogleMap.addMarker(new MarkerOptions().position(latLng));
+
+                final MarkerInfo info = new MarkerInfo();
+
+                info.setUserUID(auth.getCurrentUser().getUid());
+                info.setDesc("");
+                info.setTitle("");
+                info.setMarker(marker);
+
+
                 // add marker to hashmap
-                markers.put(marker.getId(), marker);
+                markers.put(marker.hashCode(), info);
+
                 drawer =(DrawerLayout) findViewById(R.id.drawer_layout);
                 // when user creates marker, open drawer to edit it
                 drawer.openDrawer(GravityCompat.START);
+
+
+//                com.sbhacksiii.bet.alerts.LatLng temp = new com.sbhacksiii.bet.alerts.LatLng();
+//                temp.setLat(latLng.latitude);
+//                temp.setLon(latLng.longitude);
+
                 // add marker data to firebase, this means (for now) user can have blank title and description
-                addMarkerInfoToFireBase(marker.getId(), userUID, "", "", latLng);
+                addMarkerInfoToFireBase(info);
+//                addMarkerInfoToFireBase(marker.getId(), userUID, "", "", latLng);
                 //******************************************************************************************************************************
                 // may not need to do id check here since only the user creating it can get to this delete button function
                 //******************************************************************************************************************************
                 // reference delete button
-                Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
-                // when marker drawer opens, user can delete there marker
-                delete_marker.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        //remove marker from hashmap based on marker id
-                        Marker temp_marker = markers.remove(marker.getId());
-                        temp_marker.remove();
-                        // remove marker from firebase
-                        removeMarkerInfoToFireBase(temp_marker.getId());
-                        // close drawer
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                });
+//                Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
+//                // when marker drawer opens, user can delete there marker
+//                delete_marker.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v)
+//                    {
+//                        //remove marker from hashmap based on marker id
+//                        Marker temp_marker = markers.remove(marker.getId());
+//                        temp_marker.remove();
+//                        // remove marker from firebase
+//                        removeMarkerInfoToFireBase(temp_marker.getId());
+//                        // close drawer
+//                        drawer.closeDrawer(GravityCompat.START);
+//                    }
+//                });
 
                 Button save_button = (Button) findViewById(R.id.marker_save_button);
                 // when marker drawer opens, user can save there marker data
@@ -127,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         String title = ((EditText) findViewById(R.id.marker_title)).getText().toString();
                         String desc = ((EditText) findViewById(R.id.marker_desc)).getText().toString();
                         // update current marker with data based on id
-                        updateMarkerInfoToFireBase(marker.getId(), title, desc);
+                        updateMarkerInfoToFireBase(info, title, desc);
                         // close drawer
                         drawer.closeDrawer(GravityCompat.START);
                     }
@@ -136,27 +150,81 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void addMarkerInfoToFireBase(String id, String userUID, String title, String desc, LatLng coordinates)
+    private void addMarkerInfoToFireBase(MarkerInfo info)
+    //private void addMarkerInfoToFireBase(String id, String userUID, String title, String desc, com.sbhacksiii.bet.alerts.LatLng coordinates)
     {
         // add data to marker field in database
-        MarkerInfo marker_info = new MarkerInfo();
-
-        marker_info.setTitle(title);
-        marker_info.setDesc(desc);
-        marker_info.setLatLng(coordinates);
-        marker_info.setUserUID(userUID);
-
-        database.child("markers").child(id).setValue(marker_info);
+        database.child("markers").child(Integer.toString(info.getMarker().hashCode())).setValue(info);
     }
 
-    private void updateMarkerInfoToFireBase(String id, String title, String desc)
+    private void loadAllMarkers()
     {
+         //get all markers
+
+        database.child("markers").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // get data snapshot
+//                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren())
+//                {
+//                    // deserialize child
+//                    MarkerInfo data = messageSnapshot.getValue(MarkerInfo.class);
+//                    // need to convert coordinates into the proper LaLng object
+//                    LatLng temp = new LatLng(data.getLatLng().getLat(), data.getLatLng().getLon());
+//                    // set marker
+//                    final Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp));
+//
+//                    Log.i("HASH2", Integer.toString(marker.hashCode()));
+//
+//                    markers.put(marker.hashCode(), data);
+//                    Log.i("DEBUG!!!!!!!!!!",marker.getId());
+//                    // marker.get
+//                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+//        database.child("markers").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                // get data snapshot
+//                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren())
+//                {
+//                    // deserialize child
+//                    MarkerInfo data = messageSnapshot.getValue(MarkerInfo.class);
+//                    // need to convert coordinates into the proper LaLng object
+//                    LatLng temp = new LatLng(data.getLatLng().getLat(), data.getLatLng().getLon());
+//                    // set marker
+//                    final Marker marker = mGoogleMap.addMarker(new MarkerOptions().position(temp));
+//
+//                    Log.i("HASH2", Integer.toString(marker.hashCode()));
+//                    markers.put(marker.getId(), marker);
+//                    Log.i("DEBUG!!!!!!!!!!",marker.getId());
+//                   // marker.get
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+    }
+
+    private void updateMarkerInfoToFireBase(MarkerInfo info, String title, String desc)
+    {
+
         // use hashmap to update multiple fields at once
         Map newdata = new HashMap();
         newdata.put("title", title);
         newdata.put("desc", desc);
 
-        database.child("markers").child(id).updateChildren(newdata);
+        database.child("markers").child(Integer.toString(info.getMarker().hashCode())).updateChildren(newdata);
     }
 
     private void removeMarkerInfoToFireBase(String id)
@@ -168,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onBackPressed() {
         // close drawer
+        auth.signOut();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -181,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onMarkerClick(final Marker marker) {
 
         // check if marker already exist
-        if(markers.get(marker.getId()) != null)
+        if((markers.get(marker.hashCode())) != null)
         {
             // open drawer
             drawer.openDrawer(GravityCompat.START);
@@ -191,9 +260,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // this is firebase's way to READ data
             database.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot)
+                {
+                    Log.i("TEST", "TEST@@@@");
+
+
+
                     // grab data into hashmap or child fields
-                    HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.child("markers").child(marker.getId()).getValue();
+                    HashMap<String, Object> data = (HashMap<String, Object>) dataSnapshot.child("markers").child(Integer.toString(marker.hashCode())).getValue();
                     // gran data
                     String title_str = (String) data.get("title");
                     String desc_set = (String) data.get("desc");
@@ -208,50 +282,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             });
 
-            // check if current user is owner of that marker
-            if(userUID.equals(getUserUID(marker.getId())))
-            {
-                // if yes, set delete button
-                Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
-                // when user wants to delete marker
-                delete_marker.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // remove form hashma
-                        Marker temp_marker = markers.remove(marker.getId());
-                        temp_marker.remove();
-                        // remove from firebase
-                        removeMarkerInfoToFireBase(temp_marker.getId());
-                        // close drawer
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                });
 
-                Button save_button = (Button) findViewById(R.id.marker_save_button);
-                // when user wants to update marker
-                save_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // grab fields to be saved
-                        String title = ((EditText) findViewById(R.id.marker_title)).getText().toString();
-                        String desc = ((EditText) findViewById(R.id.marker_desc)).getText().toString();
-                        // update fields in firebase
-                        updateMarkerInfoToFireBase(marker.getId(), title, desc);
-                        // close drawer
-                        drawer.closeDrawer(GravityCompat.START);
-                    }
-                });
+            if(userUID != null) {
+
+                // check if current user is owner of that marker
+              //  if ((userUID.equals(getUserUID(marker.hashCode()) {
+                    // if yes, set delete button
+//                    Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
+//                    // when user wants to delete marker
+//                    delete_marker.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            // remove form hashma
+////                            Marker temp_marker = markers.remove(marker.getId());
+////                            temp_marker.remove();
+////                            // remove from firebase
+////                            removeMarkerInfoToFireBase(temp_marker.getId());
+////                            // close drawer
+////                            drawer.closeDrawer(GravityCompat.START);
+//                        }
+//                    });
+//
+//                    Button save_button = (Button) findViewById(R.id.marker_save_button);
+//                    // when user wants to update marker
+//                    save_button.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            // reference data from edit text fields
+//                            String title = ((EditText) findViewById(R.id.marker_title)).getText().toString();
+//                            String desc = ((EditText) findViewById(R.id.marker_desc)).getText().toString();
+//                            // update current marker with data based on id
+//                            updateMarkerInfoToFireBase(info, title, desc);
+//                            // close drawer
+//                            drawer.closeDrawer(GravityCompat.START);
+//                        }
+//                    });
+//
+//                }
+//                // if not the owner
+//                else {
+//                    // hide button
+//                    Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
+//                    delete_marker.setVisibility(View.GONE);
+//                    Button save_button = (Button) findViewById(R.id.marker_save_button);
+//                    save_button.setVisibility(View.GONE);
+//                }
+
 
             }
-            // if not the owner
-            else
-            {
-                // hide button
-                Button delete_marker = (Button) findViewById(R.id.marker_delete_button);
-                delete_marker.setVisibility(View.GONE);
-                Button save_button = (Button) findViewById(R.id.marker_save_button);
-                save_button.setVisibility(View.GONE);
-            }
+
 
             return true;
         }
