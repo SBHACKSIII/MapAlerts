@@ -20,6 +20,10 @@ android {
 }
 
 dependencies {
+
+    // gplay services
+    compile 'com.google.android.gms:play-services:10.0.1'
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
